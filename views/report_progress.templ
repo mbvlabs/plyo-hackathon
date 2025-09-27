@@ -1,18 +1,16 @@
 package views
 
 import (
+	"context"
+	"fmt"
 	"github.com/mbvlabs/plyo-hackathon/models"
+	"github.com/mbvlabs/plyo-hackathon/router/routes"
 	"github.com/mbvlabs/plyo-hackathon/services"
 	"io"
-	"context"
-	"log/slog"
-	"fmt"
 	"strings"
-	"github.com/mbvlabs/plyo-hackathon/router/routes"
 )
 
 func convertMarkdown(report string) string {
-	slog.Info("##################", "re", report)
 	content, _ := services.ParseMarkdownToHTML(report)
 
 	return content
@@ -32,16 +30,15 @@ func allAgentsCompleted(report models.Report) bool {
 		report.TrendAnalysisCompleted
 }
 
-//if report.Status == "completed" && report.FinalReport != "" {
-//} else {
 templ ReportProgress(report models.Report) {
 	<div
-		data-on-interval__duration.3s={ fmt.Sprintf(`@get('/reports/%s/stream')`, report.ID.String()) }
+		if !allAgentsCompleted(report) {
+			data-on-interval__duration.3s={ fmt.Sprintf(`@get('/reports/%s/stream')`, report.ID.String()) }
+		}
 		id="chat-messages"
 		class="max-w-4xl mx-auto p-6 space-y-6"
 	>
 		<div class="flex items-start space-x-3">
-			<div class="w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0"></div>
 			<div class="flex-1">
 				<div class="bg-gray-50 rounded-lg p-4">
 					<p class="text-gray-900">
@@ -50,25 +47,49 @@ templ ReportProgress(report models.Report) {
 					</p>
 					<ul class="mt-3 space-y-2 text-sm text-gray-700">
 						<li class="flex items-center space-x-2">
-							if !report.CompanyIntelligenceCompleted {
+							if report.CompanyIntelligenceCompleted {
+								<div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+									<svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+									</svg>
+								</div>
+							} else {
 								<div class="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
 							}
 							<span>Company Intelligence</span>
 						</li>
 						<li class="flex items-center space-x-2">
-							if !report.CompetitiveIntelligenceCompleted {
+							if report.CompetitiveIntelligenceCompleted {
+								<div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+									<svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+									</svg>
+								</div>
+							} else {
 								<div class="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
 							}
 							<span>Competitive Intelligence</span>
 						</li>
 						<li class="flex items-center space-x-2">
-							if !report.MarketDynamicsCompleted {
+							if report.MarketDynamicsCompleted {
+								<div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+									<svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+									</svg>
+								</div>
+							} else {
 								<div class="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
 							}
 							<span>Market Dynamics</span>
 						</li>
 						<li class="flex items-center space-x-2">
-							if !report.TrendAnalysisCompleted {
+							if report.TrendAnalysisCompleted {
+								<div class="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+									<svg class="w-2.5 h-2.5 text-white" fill="currentColor" viewBox="0 0 20 20">
+										<path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"></path>
+									</svg>
+								</div>
+							} else {
 								<div class="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
 							}
 							<span>Trend Analysis</span>
@@ -77,10 +98,8 @@ templ ReportProgress(report models.Report) {
 				</div>
 			</div>
 		</div>
-		<!-- Show individual sections only when report is NOT completed -->
 		if report.Status != "completed" {
-			<!-- Company Intelligence Section -->
-			if report.CompanyIntelligenceCompleted && report.CompanyIntelligenceData != "" {
+			if report.CompanyIntelligenceCompleted {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
 						<h3 class="font-semibold text-gray-900 mb-2">Company Intelligence</h3>
@@ -94,13 +113,13 @@ templ ReportProgress(report models.Report) {
 			} else if report.Status != "pending" {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
-						<div class="bg-yellow-50 rounded-lg p-4">
-							<p class="text-gray-700">🔍 Analyzing company intelligence...</p>
+						<div class="bg-yellow-50 rounded-lg p-4 flex items-center space-x-3">
+							<div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+							<p class="text-gray-700">Analyzing company intelligence...</p>
 						</div>
 					</div>
 				</div>
 			}
-			<!-- Competitive Intelligence Section -->
 			if report.CompetitiveIntelligenceCompleted && report.CompetitiveIntelligenceData != "" {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
@@ -112,16 +131,16 @@ templ ReportProgress(report models.Report) {
 						</div>
 					</div>
 				</div>
-			} else if report.CompanyIntelligenceCompleted && report.Status != "pending" {
+			} else if report.CompanyIntelligenceCompleted {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
-						<div class="bg-yellow-50 rounded-lg p-4">
-							<p class="text-gray-700">🏢 Analyzing competitive landscape...</p>
+						<div class="bg-yellow-50 rounded-lg p-4 flex items-center space-x-3">
+							<div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+							<p class="text-gray-700">Analyzing competitive landscape...</p>
 						</div>
 					</div>
 				</div>
 			}
-			<!-- Market Dynamics Section -->
 			if report.MarketDynamicsCompleted && report.MarketDynamicsData != "" {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
@@ -133,16 +152,16 @@ templ ReportProgress(report models.Report) {
 						</div>
 					</div>
 				</div>
-			} else if report.CompetitiveIntelligenceCompleted && report.Status != "pending" {
+			} else if report.CompetitiveIntelligenceCompleted {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
-						<div class="bg-yellow-50 rounded-lg p-4">
-							<p class="text-gray-700">📊 Analyzing market dynamics...</p>
+						<div class="bg-yellow-50 rounded-lg p-4 flex items-center space-x-3">
+							<div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+							<p class="text-gray-700">Analyzing market dynamics...</p>
 						</div>
 					</div>
 				</div>
 			}
-			<!-- Trend Analysis Section -->
 			if report.TrendAnalysisCompleted && report.TrendAnalysisData != "" {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
@@ -154,22 +173,23 @@ templ ReportProgress(report models.Report) {
 						</div>
 					</div>
 				</div>
-			} else if report.MarketDynamicsCompleted && report.Status != "pending" {
+			} else if report.MarketDynamicsCompleted {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
-						<div class="bg-yellow-50 rounded-lg p-4">
-							<p class="text-gray-700">📈 Analyzing trends and forecasts...</p>
+						<div class="bg-yellow-50 rounded-lg p-4 flex items-center space-x-3">
+							<div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+							<p class="text-gray-700">Analyzing trends and forecasts...</p>
 						</div>
 					</div>
 				</div>
 			}
-			<!-- Pending Status Message -->
 			if report.Status == "pending" {
 				<div class="flex items-start space-x-3">
 					<div class="flex-1">
-						<div class="bg-blue-50 rounded-lg p-4">
+						<div class="bg-blue-50 rounded-lg p-4 flex items-center space-x-3">
+							<div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
 							<p class="text-gray-700">
-								⏳ Research report is queued for processing. I'll start the analysis shortly...
+								Research report is processing. I'll load in results as they come
 							</p>
 						</div>
 					</div>
@@ -192,7 +212,7 @@ templ ReportGenerationProgress(report models.Report) {
 				<div class="flex-1">
 					<div class="bg-green-50 border border-green-200 rounded-lg p-6">
 						<h2 class="text-2xl font-bold text-gray-900 mb-4">
-							✅ Research Complete: { report.CompanyName }
+							Research Complete: { report.CompanyName }
 						</h2>
 						<p class="text-gray-700 mb-6">
 							I've completed a comprehensive analysis across all four research areas. Here's your executive summary:
@@ -210,7 +230,7 @@ templ ReportGenerationProgress(report models.Report) {
 				<div class="flex-1">
 					<div class="bg-green-50 rounded-lg p-4">
 						<p class="text-gray-900 font-semibold">
-							✅ Research Complete for <strong>{ report.CompanyName }</strong>
+							Research Complete for <strong>{ report.CompanyName }</strong>
 						</p>
 						<p class="text-sm text-gray-600 mt-1">
 							All four research areas have been analyzed successfully.
@@ -222,7 +242,10 @@ templ ReportGenerationProgress(report models.Report) {
 			<div class="flex items-start space-x-3">
 				<div class="flex-1">
 					<div class="bg-blue-50 rounded-lg p-4">
-						<p class="text-gray-900 font-semibold">📝 Generating Executive Report</p>
+						<div class="flex items-center space-x-3">
+							<div class="w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+							<p class="text-gray-900 font-semibold">Generating Executive Report</p>
+						</div>
 						<p class="text-sm text-gray-600 mt-1">
 							Synthesizing research findings into a comprehensive executive summary...
 						</p>

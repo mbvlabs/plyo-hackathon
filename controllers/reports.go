@@ -208,6 +208,10 @@ func (r Reports) Show(c echo.Context) error {
 		if err := jobs.Create(c.Request().Context(), r.q, agents.MarketDynamicsJobName, marketData); err != nil {
 			log.Info("Error creating job", "error", err)
 		}
+
+		if err := models.UpdateReportProgressToStarted(c.Request().Context(), r.db.Conn(), report.ID); err != nil {
+			return err
+		}
 	}
 
 	return render(c, views.ReportChat(report))
@@ -239,10 +243,6 @@ func (r Reports) TrackReportProgress(c echo.Context) error {
 		return c.String(404, "Report not found")
 	}
 
-	if allAgentsCompleted(report) && report.FinalReport != "" {
-		return sse.PatchElementTempl(views.ReportGenerationProgress(report))
-	}
-
 	if allAgentsCompleted(report) && report.FinalReport == "" {
 		company, err := models.FindCompanyCandidates(
 			c.Request().Context(),
@@ -271,19 +271,9 @@ func (r Reports) TrackReportProgress(c echo.Context) error {
 	}
 
 	if err := sse.PatchElementTempl(views.ReportProgress(report)); err != nil {
-		slog.Info(
-			"########################################## ERRORRRRR ###############################",
-			"e",
-			err,
-		)
 		return err
 	}
 	if err := sse.PatchElementTempl(views.ReportUpdated(report.UpdatedAt)); err != nil {
-		slog.Info(
-			"########################################## ERRORRRRR ###############################",
-			"e",
-			err,
-		)
 		return err
 	}
 	return sse.PatchElementTempl(views.ReportHeaderProgress(report))
@@ -315,10 +305,9 @@ func (r Reports) TrackReportGeneration(c echo.Context) error {
 		return c.String(404, "Report not found")
 	}
 
-	if report.Status == "completed" && report.FinalReport == "" {
-		return sse.PatchElementTempl(views.ReportProgress(report))
+	if err := sse.PatchElementTempl(views.ReportHeaderProgress(report)); err != nil {
+		return err
 	}
-
 	return sse.PatchElementTempl(views.ReportGenerationProgress(report))
 }
 

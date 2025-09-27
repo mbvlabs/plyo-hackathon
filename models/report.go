@@ -264,7 +264,29 @@ func CalculateProgress(report Report) int64 {
 		completedCount++
 	}
 
-	return (completedCount * 100) / totalAgents
+	progress := (completedCount * 100) / totalAgents
+
+	// If all agents are completed and final report exists, show 100%
+	// This prevents the progress from dropping when final report is being generated
+	if completedCount == totalAgents && report.FinalReport != "" {
+		return 100
+	}
+
+	return progress
+}
+
+func UpdateReportProgressToStarted(
+	ctx context.Context,
+	dbtx db.DBTX,
+	reportID uuid.UUID,
+) error {
+	status := "in_progress"
+
+	return db.New().UpdateReportProgress(ctx, dbtx, db.UpdateReportProgressParams{
+		ProgressPercentage: sql.NullInt64{Int64: 0, Valid: true},
+		Status:             status,
+		ID:                 reportID.String(),
+	})
 }
 
 func UpdateReportProgress(
@@ -280,9 +302,12 @@ func UpdateReportProgress(
 	progress := CalculateProgress(report)
 	status := "in_progress"
 
-	if progress == 100 {
+	switch {
+	case progress == 100:
 		status = "completed"
-	} else if progress == 0 {
+	case progress > 0 && progress < 100:
+		status = "processing"
+	case progress == 0:
 		status = "pending"
 	}
 

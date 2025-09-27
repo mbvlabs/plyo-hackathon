@@ -47,4 +47,3 @@ var ReportStreamGeneration = Route{
 	Handler:      "Reports",
 	HandleMethod: "TrackReportGeneration",
 }
-

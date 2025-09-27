@@ -15,12 +15,10 @@ import (
 	"github.com/mbvlabs/plyo-hackathon/router/routes"
 	"github.com/mbvlabs/plyo-hackathon/services"
 	"io"
-	"log/slog"
 	"strings"
 )
 
 func convertMarkdown(report string) string {
-	slog.Info("##################", "re", report)
 	content, _ := services.ParseMarkdownToHTML(report)
 
 	return content
@@ -40,8 +38,6 @@ func allAgentsCompleted(report models.Report) bool {
 		report.TrendAnalysisCompleted
 }
 
-// if report.Status == "completed" && report.FinalReport != "" {
-// } else {
 func ReportProgress(report models.Report) templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -63,201 +59,227 @@ func ReportProgress(report models.Report) templ.Component {
 			templ_7745c5c3_Var1 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div data-on-interval__duration.3s=\"")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		var templ_7745c5c3_Var2 string
-		templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`@get('/reports/%s/stream')`, report.ID.String()))
-		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 39, Col: 95}
+		if !allAgentsCompleted(report) {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, " data-on-interval__duration.3s=\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			var templ_7745c5c3_Var2 string
+			templ_7745c5c3_Var2, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf(`@get('/reports/%s/stream')`, report.ID.String()))
+			if templ_7745c5c3_Err != nil {
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 36, Col: 96}
+			}
+			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "\"")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
 		}
-		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var2))
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "\" id=\"chat-messages\" class=\"max-w-4xl mx-auto p-6 space-y-6\"><div class=\"flex items-start space-x-3\"><div class=\"w-8 h-8 bg-green-500 rounded-full flex items-center justify-center flex-shrink-0\"></div><div class=\"flex-1\"><div class=\"bg-gray-50 rounded-lg p-4\"><p class=\"text-gray-900\">I'm starting a comprehensive research analysis for <strong>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " id=\"chat-messages\" class=\"max-w-4xl mx-auto p-6 space-y-6\"><div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-gray-50 rounded-lg p-4\"><p class=\"text-gray-900\">I'm starting a comprehensive research analysis for <strong>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		var templ_7745c5c3_Var3 string
 		templ_7745c5c3_Var3, templ_7745c5c3_Err = templ.JoinStringErrs(report.CompanyName)
 		if templ_7745c5c3_Err != nil {
-			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 48, Col: 85}
+			return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 45, Col: 85}
 		}
 		_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var3))
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "</strong>. I'll gather intelligence across four key areas:</p><ul class=\"mt-3 space-y-2 text-sm text-gray-700\"><li class=\"flex items-center space-x-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</strong>. I'll gather intelligence across four key areas:</p><ul class=\"mt-3 space-y-2 text-sm text-gray-700\"><li class=\"flex items-center space-x-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if !report.CompanyIntelligenceCompleted {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "<div class=\"w-4 h-4 border-2 border-gray-300 rounded-full\"></div>")
+		if report.CompanyIntelligenceCompleted {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"w-4 h-4 bg-green-500 rounded-full flex items-center justify-center\"><svg class=\"w-2.5 h-2.5 text-white\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<div class=\"w-4 h-4 border-2 border-gray-300 rounded-full\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "<span>Company Intelligence</span></li><li class=\"flex items-center space-x-2\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span>Company Intelligence</span></li><li class=\"flex items-center space-x-2\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
-		if !report.CompetitiveIntelligenceCompleted {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "<div class=\"w-4 h-4 border-2 border-gray-300 rounded-full\"></div>")
+		if report.CompetitiveIntelligenceCompleted {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<div class=\"w-4 h-4 bg-green-500 rounded-full flex items-center justify-center\"><svg class=\"w-2.5 h-2.5 text-white\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<span>Competitive Intelligence</span></li><li class=\"flex items-center space-x-2\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if !report.MarketDynamicsCompleted {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<div class=\"w-4 h-4 border-2 border-gray-300 rounded-full\"></div>")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span>Market Dynamics</span></li><li class=\"flex items-center space-x-2\">")
-		if templ_7745c5c3_Err != nil {
-			return templ_7745c5c3_Err
-		}
-		if !report.TrendAnalysisCompleted {
+		} else {
 			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "<div class=\"w-4 h-4 border-2 border-gray-300 rounded-full\"></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span>Trend Analysis</span></li></ul></div></div></div><!-- Show individual sections only when report is NOT completed -->")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 11, "<span>Competitive Intelligence</span></li><li class=\"flex items-center space-x-2\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if report.MarketDynamicsCompleted {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<div class=\"w-4 h-4 bg-green-500 rounded-full flex items-center justify-center\"><svg class=\"w-2.5 h-2.5 text-white\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"w-4 h-4 border-2 border-gray-300 rounded-full\"></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "<span>Market Dynamics</span></li><li class=\"flex items-center space-x-2\">")
+		if templ_7745c5c3_Err != nil {
+			return templ_7745c5c3_Err
+		}
+		if report.TrendAnalysisCompleted {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"w-4 h-4 bg-green-500 rounded-full flex items-center justify-center\"><svg class=\"w-2.5 h-2.5 text-white\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z\" clip-rule=\"evenodd\"></path></svg></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		} else {
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, "<div class=\"w-4 h-4 border-2 border-gray-300 rounded-full\"></div>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+		}
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<span>Trend Analysis</span></li></ul></div></div></div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if report.Status != "completed" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 12, "<!-- Company Intelligence Section --> ")
-			if templ_7745c5c3_Err != nil {
-				return templ_7745c5c3_Err
-			}
-			if report.CompanyIntelligenceCompleted && report.CompanyIntelligenceData != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 13, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Company Intelligence</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
+			if report.CompanyIntelligenceCompleted {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Company Intelligence</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var4 string
 				templ_7745c5c3_Var4, templ_7745c5c3_Err = templ.JoinStringErrs(report.CompanyIntelligenceData)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 89, Col: 40}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 108, Col: 40}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var4))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 14, "</div></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "</div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			} else if report.Status != "pending" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 15, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4\"><p class=\"text-gray-700\">🔍 Analyzing company intelligence...</p></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4 flex items-center space-x-3\"><div class=\"w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin\"></div><p class=\"text-gray-700\">Analyzing company intelligence...</p></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 16, " <!-- Competitive Intelligence Section --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if report.CompetitiveIntelligenceCompleted && report.CompetitiveIntelligenceData != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 17, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Competitive Intelligence</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Competitive Intelligence</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var5 string
 				templ_7745c5c3_Var5, templ_7745c5c3_Err = templ.JoinStringErrs(report.CompetitiveIntelligenceData)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 110, Col: 44}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 129, Col: 44}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var5))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 18, "</div></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "</div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else if report.CompanyIntelligenceCompleted && report.Status != "pending" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 19, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4\"><p class=\"text-gray-700\">🏢 Analyzing competitive landscape...</p></div></div></div>")
+			} else if report.CompanyIntelligenceCompleted {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4 flex items-center space-x-3\"><div class=\"w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin\"></div><p class=\"text-gray-700\">Analyzing competitive landscape...</p></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 20, " <!-- Market Dynamics Section --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if report.MarketDynamicsCompleted && report.MarketDynamicsData != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 21, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Market Dynamics</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Market Dynamics</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var6 string
 				templ_7745c5c3_Var6, templ_7745c5c3_Err = templ.JoinStringErrs(report.MarketDynamicsData)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 131, Col: 35}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 150, Col: 35}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var6))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 22, "</div></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "</div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else if report.CompetitiveIntelligenceCompleted && report.Status != "pending" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 23, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4\"><p class=\"text-gray-700\">📊 Analyzing market dynamics...</p></div></div></div>")
+			} else if report.CompetitiveIntelligenceCompleted {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4 flex items-center space-x-3\"><div class=\"w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin\"></div><p class=\"text-gray-700\">Analyzing market dynamics...</p></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 24, " <!-- Trend Analysis Section --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if report.TrendAnalysisCompleted && report.TrendAnalysisData != "" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 25, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Trend Analysis</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><h3 class=\"font-semibold text-gray-900 mb-2\">Trend Analysis</h3><div class=\"bg-gray-50 rounded-lg p-4\"><div class=\"prose prose-sm max-w-none\">")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 				var templ_7745c5c3_Var7 string
 				templ_7745c5c3_Var7, templ_7745c5c3_Err = templ.JoinStringErrs(report.TrendAnalysisData)
 				if templ_7745c5c3_Err != nil {
-					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 152, Col: 34}
+					return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 171, Col: 34}
 				}
 				_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var7))
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 26, "</div></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "</div></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
-			} else if report.MarketDynamicsCompleted && report.Status != "pending" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 27, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4\"><p class=\"text-gray-700\">📈 Analyzing trends and forecasts...</p></div></div></div>")
+			} else if report.MarketDynamicsCompleted {
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-yellow-50 rounded-lg p-4 flex items-center space-x-3\"><div class=\"w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin\"></div><p class=\"text-gray-700\">Analyzing trends and forecasts...</p></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 28, " <!-- Pending Status Message --> ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, " ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			if report.Status == "pending" {
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 29, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-blue-50 rounded-lg p-4\"><p class=\"text-gray-700\">⏳ Research report is queued for processing. I'll start the analysis shortly...</p></div></div></div>")
+				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-blue-50 rounded-lg p-4 flex items-center space-x-3\"><div class=\"w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin\"></div><p class=\"text-gray-700\">Research report is processing. I'll load in results as they come</p></div></div></div>")
 				if templ_7745c5c3_Err != nil {
 					return templ_7745c5c3_Err
 				}
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 30, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
@@ -286,48 +308,48 @@ func ReportGenerationProgress(report models.Report) templ.Component {
 			templ_7745c5c3_Var8 = templ.NopComponent
 		}
 		ctx = templ.ClearChildren(ctx)
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 31, "<div")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "<div")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if report.FinalReport == "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 32, " data-on-interval__duration.3s=\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, " data-on-interval__duration.3s=\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var9 string
 			templ_7745c5c3_Var9, templ_7745c5c3_Err = templ.JoinStringErrs(fmt.Sprintf("@get('%s')", strings.Replace(routes.ReportStreamGeneration.Path, ":id", report.ID.String(), 1)))
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 185, Col: 143}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 205, Col: 143}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var9))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 33, "\"")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "\"")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 34, " id=\"chat-messages\" class=\"container mx-auto p-6 space-y-6\">")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, " id=\"chat-messages\" class=\"container mx-auto p-6 space-y-6\">")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}
 		if report.FinalReport != "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 35, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-green-50 border border-green-200 rounded-lg p-6\"><h2 class=\"text-2xl font-bold text-gray-900 mb-4\">✅ Research Complete: ")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "<div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-green-50 border border-green-200 rounded-lg p-6\"><h2 class=\"text-2xl font-bold text-gray-900 mb-4\">Research Complete: ")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var10 string
 			templ_7745c5c3_Var10, templ_7745c5c3_Err = templ.JoinStringErrs(report.CompanyName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 195, Col: 50}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 215, Col: 46}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var10))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 36, "</h2><p class=\"text-gray-700 mb-6\">I've completed a comprehensive analysis across all four research areas. Here's your executive summary:</p><div class=\"prose prose-lg max-w-none text-gray-900\">")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 41, "</h2><p class=\"text-gray-700 mb-6\">I've completed a comprehensive analysis across all four research areas. Here's your executive summary:</p><div class=\"prose prose-lg max-w-none text-gray-900\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -335,31 +357,31 @@ func ReportGenerationProgress(report models.Report) templ.Component {
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 37, "</div></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 42, "</div></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
 		if report.FinalReport == "" {
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 38, "<!-- Research Complete - Generating Report --> <div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-green-50 rounded-lg p-4\"><p class=\"text-gray-900 font-semibold\">✅ Research Complete for <strong>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 43, "<!-- Research Complete - Generating Report --> <div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-green-50 rounded-lg p-4\"><p class=\"text-gray-900 font-semibold\">Research Complete for <strong>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			var templ_7745c5c3_Var11 string
 			templ_7745c5c3_Var11, templ_7745c5c3_Err = templ.JoinStringErrs(report.CompanyName)
 			if templ_7745c5c3_Err != nil {
-				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 213, Col: 61}
+				return templ.Error{Err: templ_7745c5c3_Err, FileName: `views/report_progress.templ`, Line: 233, Col: 57}
 			}
 			_, templ_7745c5c3_Err = templ_7745c5c3_Buffer.WriteString(templ.EscapeString(templ_7745c5c3_Var11))
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 39, "</strong></p><p class=\"text-sm text-gray-600 mt-1\">All four research areas have been analyzed successfully.</p></div></div></div><!-- Report Generation Status --> <div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-blue-50 rounded-lg p-4\"><p class=\"text-gray-900 font-semibold\">📝 Generating Executive Report</p><p class=\"text-sm text-gray-600 mt-1\">Synthesizing research findings into a comprehensive executive summary...</p></div></div></div>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 44, "</strong></p><p class=\"text-sm text-gray-600 mt-1\">All four research areas have been analyzed successfully.</p></div></div></div><!-- Report Generation Status --> <div class=\"flex items-start space-x-3\"><div class=\"flex-1\"><div class=\"bg-blue-50 rounded-lg p-4\"><div class=\"flex items-center space-x-3\"><div class=\"w-5 h-5 border-2 border-blue-500 border-t-transparent rounded-full animate-spin\"></div><p class=\"text-gray-900 font-semibold\">Generating Executive Report</p></div><p class=\"text-sm text-gray-600 mt-1\">Synthesizing research findings into a comprehensive executive summary...</p></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 		}
-		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 40, "</div>")
+		templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 45, "</div>")
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

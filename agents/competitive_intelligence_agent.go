@@ -33,6 +33,8 @@ Use the tools available to your disposal to search and gather competitive intell
 3. Search for "[industry] market landscape [current year]"
 4. Search for recent funding/partnership news
 
+Make sure to scrape the competitors website and their about page to have full context.
+
 Always provide sources and explain your search methodology.
 
 Prioritize current, publicly available information. Classify competitors by threat level and market overlap. Provide actionable competitive insights.`
