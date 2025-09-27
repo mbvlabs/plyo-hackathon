@@ -8,6 +8,7 @@ import (
 	"github.com/mbvlabs/plyo-hackathon/database"
 	"github.com/mbvlabs/plyo-hackathon/router/cookies"
 	"github.com/starfederation/datastar-go/datastar"
+	"maragu.dev/goqite"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -25,6 +26,7 @@ type Controllers struct {
 func New(
 	prelimAgent agents.PreliminaryResearch,
 	db database.SQLite,
+	q *goqite.Queue,
 ) (Controllers, error) {
 	cacheBuilder, err := otter.NewBuilder[string, templ.Component](20)
 	if err != nil {
@@ -37,10 +39,10 @@ func New(
 	}
 
 	assets := newAssets()
-	pages := newPages(db, pageCacher)
+	pages := newPages(db, q, pageCacher)
 	api := newAPI(db)
 	researchbriefs := newResearchBriefs(prelimAgent, db)
-	reports := newReports(db)
+	reports := newReports(db, q)
 
 	return Controllers{
 		assets,

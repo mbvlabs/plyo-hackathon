@@ -4,9 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/mbvlabs/plyo-hackathon/providers"
 	"github.com/mbvlabs/plyo-hackathon/tools"
 )
+
+const MarketDynamicsJobName = "market_dynamics_job"
+
+type MarketDynamicsJobParams struct {
+	ReportID      uuid.UUID `json:"report_id"`
+	CandidateName string    `json:"candidate_name"`
+	CompanyURL    string    `json:"company_url"`
+}
 
 const marketDynamicsSystemPrompt = `
 You are a Market Dynamics Agent specializing in market analysis and sizing. Your role encompasses:

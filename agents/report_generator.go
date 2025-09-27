@@ -4,9 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/mbvlabs/plyo-hackathon/providers"
 	"github.com/mbvlabs/plyo-hackathon/tools"
 )
+
+const ReportGeneratorJobName = "report_generator_job"
+
+type ReportGeneratorJobParams struct {
+	ReportID      uuid.UUID `json:"report_id"`
+	CandidateName string    `json:"candidate_name"`
+	CompanyURL    string    `json:"company_url"`
+}
 
 const reportGeneratorSystemPrompt = `
 You are a Report Generator Agent specialized in synthesizing business intelligence research into comprehensive executive reports.

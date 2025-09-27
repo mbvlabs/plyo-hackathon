@@ -6,22 +6,23 @@ import (
 )
 
 templ ReportHeaderProgress(report models.Report) {
-	<!-- Progress Bar -->
-	<div class="flex items-center space-x-2">
-		<span class="text-sm text-gray-500">Progress:</span>
-		<div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
-			<div
-				class="h-full bg-green-500 transition-all duration-300"
-				style={ fmt.Sprintf("width: %d%%", report.ProgressPercentage) }
-			></div>
+	<div id="progress-header" class="flex items-center space-x-4">
+		<div class="flex items-center space-x-2">
+			<span class="text-sm text-gray-500">Progress:</span>
+			<div class="w-32 h-2 bg-gray-200 rounded-full overflow-hidden">
+				<div
+					class="h-full bg-green-500 transition-all duration-300"
+					style={ fmt.Sprintf("width: %d%%", report.ProgressPercentage) }
+				></div>
+			</div>
+			<span class="text-sm font-medium text-gray-700">{ fmt.Sprintf("%d%%", report.ProgressPercentage) }</span>
 		</div>
-		<span class="text-sm font-medium text-gray-700">{ fmt.Sprintf("%d%%", report.ProgressPercentage) }</span>
-	</div>
-	<!-- Status Badge -->
-	<span
-		class={ "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium " +
+		<span
+			class={ "inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium " +
 		statusBadgeClass(report.Status) }
-	>
-		{ report.Status }
-	</span>
+		>
+			{ report.Status }
+		</span>
+	</div>
 }
+

@@ -4,9 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/mbvlabs/plyo-hackathon/providers"
 	"github.com/mbvlabs/plyo-hackathon/tools"
 )
+
+const CompetitiveIntelligenceJobName = "competitive_intel_job"
+
+type CompetitiveIntelligenceJobParams struct {
+	ReportID      uuid.UUID `json:"report_id"`
+	CandidateName string    `json:"candidate_name"`
+	CompanyURL    string    `json:"company_url"`
+}
 
 const competitiveIntelligenceSystemPrompt = `
 You are a Competitive Intelligence Agent focused on mapping competitive landscapes. Your responsibilities include:

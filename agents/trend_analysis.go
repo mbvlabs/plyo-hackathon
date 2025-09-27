@@ -4,9 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/mbvlabs/plyo-hackathon/providers"
 	"github.com/mbvlabs/plyo-hackathon/tools"
 )
+
+const TrendAnalysisJobName = "trend_analysis_job"
+
+type TrendAnalysisJobParams struct {
+	ReportID      uuid.UUID `json:"report_id"`
+	CandidateName string    `json:"candidate_name"`
+	CompanyURL    string    `json:"company_url"`
+}
 
 const trendAnalysisSystemPrompt = `
 You are a Trend Analysis Agent focused on identifying and analyzing industry trends. Your responsibilities include:

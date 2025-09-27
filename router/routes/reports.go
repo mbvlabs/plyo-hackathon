@@ -36,5 +36,6 @@ var ReportStreamProgress = Route{
 	Path:         reportsRoutePrefix + "/:id/stream",
 	Method:       http.MethodGet,
 	Handler:      "Reports",
-	HandleMethod: "StreamProgress",
+	HandleMethod: "TrackReportProgress",
 }
+

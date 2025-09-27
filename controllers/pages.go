@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"github.com/mbvlabs/plyo-hackathon/database"
+	"maragu.dev/goqite"
 
 	"github.com/mbvlabs/plyo-hackathon/views"
 
@@ -12,14 +13,16 @@ import (
 
 type Pages struct {
 	db    database.SQLite
+	q     *goqite.Queue
 	cache otter.CacheWithVariableTTL[string, templ.Component]
 }
 
 func newPages(
 	db database.SQLite,
+	q *goqite.Queue,
 	cache otter.CacheWithVariableTTL[string, templ.Component],
 ) Pages {
-	return Pages{db, cache}
+	return Pages{db, q, cache}
 }
 
 func (p Pages) Home(c echo.Context) error {

@@ -4,9 +4,18 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/mbvlabs/plyo-hackathon/providers"
 	"github.com/mbvlabs/plyo-hackathon/tools"
 )
+
+const CompanyIntelligenceJobName = "company_intel_job"
+
+type CompanyIntelligenceJobParams struct {
+	ReportID      uuid.UUID `json:"report_id"`
+	CandidateName string    `json:"candidate_name"`
+	CompanyURL    string    `json:"company_url"`
+}
 
 const companyIntelligenceSystemPrompt = `
 You are a Company Intelligence Agent specialized in gathering comprehensive company information. Your role is to:
