@@ -41,7 +41,7 @@ func Home() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<h1>Welcome to the Home Page</h1><p>This is a simple home page template.</p>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"min-h-screen bg-white flex flex-col\"><!-- Header --><div class=\"p-6 text-center\"><div class=\"flex items-center justify-center space-x-3 mb-4\"><div class=\"w-10 h-10 bg-green-500 rounded-full flex items-center justify-center\"><svg class=\"w-6 h-6 text-white\" fill=\"currentColor\" viewBox=\"0 0 20 20\"><path fill-rule=\"evenodd\" d=\"M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z\" clip-rule=\"evenodd\"></path></svg></div><h1 class=\"text-3xl font-bold text-gray-900\">Company GPT</h1></div></div><!-- Main Content --><div class=\"flex-1 flex flex-col justify-center items-center p-8\"><div class=\"max-w-2xl w-full text-center\"><h2 class=\"text-4xl font-bold text-gray-900 mb-4\">How can I help you today?</h2><p class=\"text-gray-600 mb-8\">Ask me anything - I'm here to assist you!</p><!-- Search Bar --><div class=\"mb-8\"><div class=\"relative\"><textarea class=\"text-black w-full p-4 pr-12 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm\" placeholder=\"Research Company e.g. plyolab, kfund, latitude\" rows=\"1\" style=\"min-height: 56px;\"></textarea> <button class=\"absolute right-3 top-1/2 transform -translate-y-1/2 p-2 bg-green-500 hover:bg-green-600 text-white rounded-lg transition-colors\"><svg class=\"w-5 h-5\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" stroke-width=\"2\" d=\"M12 19l9 2-9-18-9 18 9-2zm0 0v-8\"></path></svg></button></div><p class=\"text-xs text-gray-500 mt-2\">Company GPT can make mistakes. Check important info.</p></div><!-- Suggested prompts --></div></div></div>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
@@ -55,4 +55,60 @@ func Home() templ.Component {
 	})
 }
 
+// <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+//
+//	<div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+//		<div class="flex items-start space-x-3">
+//			<div class="w-6 h-6 text-blue-500">
+//				<svg fill="currentColor" viewBox="0 0 20 20">
+//					<path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+//				</svg>
+//			</div>
+//			<div class="text-left">
+//				<h3 class="font-medium text-gray-900">Write code</h3>
+//				<p class="text-sm text-gray-600">Help me write a function to validate email addresses</p>
+//			</div>
+//		</div>
+//	</div>
+//	<div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+//		<div class="flex items-start space-x-3">
+//			<div class="w-6 h-6 text-green-500">
+//				<svg fill="currentColor" viewBox="0 0 20 20">
+//					<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path>
+//				</svg>
+//			</div>
+//			<div class="text-left">
+//				<h3 class="font-medium text-gray-900">Explain concepts</h3>
+//				<p class="text-sm text-gray-600">What is the difference between REST and GraphQL?</p>
+//			</div>
+//		</div>
+//	</div>
+//	<div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+//		<div class="flex items-start space-x-3">
+//			<div class="w-6 h-6 text-purple-500">
+//				<svg fill="currentColor" viewBox="0 0 20 20">
+//					<path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"></path>
+//				</svg>
+//			</div>
+//			<div class="text-left">
+//				<h3 class="font-medium text-gray-900">Brainstorm ideas</h3>
+//				<p class="text-sm text-gray-600">Give me creative ideas for a mobile app</p>
+//			</div>
+//		</div>
+//	</div>
+//	<div class="p-4 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer transition-colors">
+//		<div class="flex items-start space-x-3">
+//			<div class="w-6 h-6 text-orange-500">
+//				<svg fill="currentColor" viewBox="0 0 20 20">
+//					<path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"></path>
+//				</svg>
+//			</div>
+//			<div class="text-left">
+//				<h3 class="font-medium text-gray-900">Analyze data</h3>
+//				<p class="text-sm text-gray-600">Help me understand this dataset and find patterns</p>
+//			</div>
+//		</div>
+//	</div>
+//
+// </div>
 var _ = templruntime.GeneratedTemplate
