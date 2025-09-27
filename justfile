@@ -83,3 +83,6 @@ vet:
 
 golines:
 	@golines -w -m 100 controllers models router router/routes 
+
+playground:
+	go run cmd/playground/main.go

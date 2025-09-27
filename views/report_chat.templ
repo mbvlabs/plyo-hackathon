@@ -2,7 +2,6 @@ package views
 
 import (
 	"github.com/mbvlabs/plyo-hackathon/models"
-	"fmt"
 	"github.com/dustin/go-humanize"
 	"time"
 )
@@ -21,12 +20,12 @@ templ ReportChat(report models.Report) {
 					</div>
 				</div>
 				<div class="flex-1 overflow-y-auto bg-white">
-					<div
-						id="reportProgressPuller"
-						data-on-interval__duration.1s={ fmt.Sprintf(`@get('/reports/%s/stream')`, report.ID.String()) }
-					>
+					if report.FinalReport != "" {
+						@ReportGenerationProgress(report)
+					}
+					if report.FinalReport == "" {
 						@ReportProgress(report)
-					</div>
+					}
 				</div>
 				<div class="bg-white border-t border-gray-200 p-4">
 					<div class="max-w-4xl mx-auto">
@@ -39,7 +38,7 @@ templ ReportChat(report models.Report) {
 }
 
 templ ReportUpdated(t time.Time) {
-	<div class="flex items-center justify-between text-sm text-gray-500">
+	<div id="reportUpdatedAt" class="flex items-center justify-between text-sm text-gray-500">
 		<p>This page will automatically update as the research progresses.</p>
 		<p>Last updated: { humanize.Time(t) }</p>
 	</div>

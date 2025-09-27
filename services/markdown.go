@@ -2,6 +2,7 @@ package services
 
 import (
 	"bytes"
+	"strings"
 
 	chromahtml "github.com/alecthomas/chroma/v2/formatters/html"
 	"github.com/yuin/goldmark"
@@ -35,11 +36,31 @@ func newParser() goldmark.Markdown {
 	)
 }
 
-func ParseMarkdownToHtml(content string) (string, error) {
+func cleanMarkdownBlock(report string) string {
+	report = strings.TrimSpace(report)
+
+	// // Remove opening markdown block
+	// if strings.HasPrefix(report, "```markdown\n") {
+	// 	report = report[12:]
+	// } else if strings.HasPrefix(report, "```\n") {
+	// 	report = report[4:]
+	// }
+	//
+	// // Remove closing markdown block
+	// if strings.HasSuffix(report, "\n```") {
+	// 	report = report[:len(report)-4]
+	// } else if strings.HasSuffix(report, "```") {
+	// 	report = report[:len(report)-3]
+	// }
+	//
+	return strings.TrimSpace(report)
+}
+
+func ParseMarkdownToHTML(content string) (string, error) {
 	parser := newParser()
 
 	var htmlOutput bytes.Buffer
-	if err := parser.Convert([]byte(content), &htmlOutput); err != nil {
+	if err := parser.Convert([]byte(cleanMarkdownBlock(content)), &htmlOutput); err != nil {
 		return "", err
 	}
 

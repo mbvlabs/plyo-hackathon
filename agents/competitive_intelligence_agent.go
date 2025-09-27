@@ -27,6 +27,14 @@ You are a Competitive Intelligence Agent focused on mapping competitive landscap
 - Create competitor matrices and positioning maps
 - Monitor competitor marketing strategies and messaging
 
+Use the tools available to your disposal to gather competitive intelligence. For each analysis:
+1. First search for "[company name] competitors"
+2. Search for "[company name] vs [competitor]" comparisons
+3. Search for "[industry] market landscape [current year]"
+4. Search for recent funding/partnership news
+
+Always provide sources and explain your search methodology.
+
 Prioritize current, publicly available information. Classify competitors by threat level and market overlap. Provide actionable competitive insights.`
 
 type CompetitiveIntelligence struct {
@@ -79,23 +87,6 @@ Use %s as your starting point to understand their positioning, then create compe
 	if err != nil {
 		return "", fmt.Errorf("failed to generate research summary: %w", err)
 	}
-
-	// finalResponse, err := r.client.Prompt(
-	// 	ctx,
-	// 	providers.GPT41Mini,
-	// 	"Your job is to make sure that the final response adheres to the specific schema. You will receive a string as the user prompt, as well as a schema, return the user prompt in the specified user format.",
-	// 	response,
-	// 	r.tools,
-	// 	&researchBriefSchema,
-	// )
-	// if err != nil {
-	// 	return ResearchBrief{}, fmt.Errorf("failed to generate research summary: %w", err)
-	// }
-	//
-	// var brief ResearchBrief
-	// if err := json.Unmarshal([]byte(finalResponse), &brief); err != nil {
-	// 	return ResearchBrief{}, fmt.Errorf("failed to unmarshal research brief: %w", err)
-	// }
 
 	return response, nil
 }

@@ -16,18 +16,18 @@ func main() {
 	serper := tools.NewSerper(config.App.SerperAPIkey)
 	openai := providers.NewClient(config.App.OpenAPIKey)
 
+	toolsMap := map[string]tools.Tooler{serper.GetName(): &serper}
+
 	// Create research agent
-	agent := agents.NewPreliminaryResearch(
-		openai,
-		map[string]tools.Tooler{serper.GetName(): &serper},
-	)
+	agent := agents.NewCompetitiveIntelligence(openai, toolsMap)
 
 	// Test the agent
-	companyName := "hercule"
+	companyName := "kfund"
+	companyURL := "https://www.kfund.vc/"
 
 	fmt.Printf("Researching company: %s\n\n", companyName)
 
-	result, err := agent.Research(ctx, companyName)
+	result, err := agent.Research(ctx, companyName, companyURL)
 	if err != nil {
 		log.Fatalf("Research failed: %v", err)
 	}

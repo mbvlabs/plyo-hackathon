@@ -13,6 +13,7 @@ var ReportRoutes = []Route{
 	ReportCreate,
 	ReportShow,
 	ReportStreamProgress,
+	ReportStreamGeneration,
 }
 
 var ReportCreate = Route{
@@ -37,5 +38,13 @@ var ReportStreamProgress = Route{
 	Method:       http.MethodGet,
 	Handler:      "Reports",
 	HandleMethod: "TrackReportProgress",
+}
+
+var ReportStreamGeneration = Route{
+	Name:         reportsNamePrefix + ".stream-generation",
+	Path:         reportsRoutePrefix + "/:id/track-generation",
+	Method:       http.MethodGet,
+	Handler:      "Reports",
+	HandleMethod: "TrackReportGeneration",
 }
 

@@ -32,7 +32,9 @@ Your responsibilities:
 
 Focus on delivering clear, actionable insights that enable strategic decision-making. 
 
-Your output must be a well-structured markdown report that executives can use for strategic planning.
+Your report must be a well-structured, valid markdown report that executives can use for strategic planning.
+
+Do NOT include any backticks at the start and beginning of the report.
 
 Always include a section at the end that has all the sources used to generate the report.
 `

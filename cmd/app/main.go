@@ -136,12 +136,12 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### starting report generation",
-			"report_id",
-			params.ReportID,
-		)
+		// slog.InfoContext(
+		// 	ctx,
+		// 	"####################### starting report generation",
+		// 	"report_id",
+		// 	params.ReportID,
+		// )
 		result, err := reportGenerator.Generate(
 			ctx,
 			params.CandidateName,
@@ -171,24 +171,24 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### starting trend analysis",
-			"report_id",
-			params.ReportID,
-		)
+		// slog.InfoContext(
+		// 	ctx,
+		// 	"####################### starting trend analysis",
+		// 	"report_id",
+		// 	params.ReportID,
+		// )
 		result, err := trendAnalysis.Research(ctx, params.CandidateName, params.CompanyURL)
 		if err != nil {
 			slog.ErrorContext(ctx, "research failed", "error", err)
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### result of trend analysis",
-			"result",
-			result,
-		)
+		// slog.InfoContext(
+		// 	ctx,
+		// 	"####################### result of trend analysis",
+		// 	"result",
+		// 	result,
+		// )
 
 		if err := models.UpdateTrendAnalysis(ctx, sqlite.Conn(), params.ReportID, result); err != nil {
 			slog.ErrorContext(ctx, "failed to update trend analysis", "error", err)
@@ -209,24 +209,24 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### starting market dynamics",
-			"report_id",
-			params.ReportID,
-		)
+		// slog.InfoContext(
+		// 	ctx,
+		// 	"####################### starting market dynamics",
+		// 	"report_id",
+		// 	params.ReportID,
+		// )
 		result, err := marketDynamics.Research(ctx, params.CandidateName, params.CompanyURL)
 		if err != nil {
 			slog.ErrorContext(ctx, "research failed", "error", err)
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### result of market dynamics",
-			"result",
-			result,
-		)
+		// slog.InfoContext(
+		// 	ctx,
+		// 	"####################### result of market dynamics",
+		// 	"result",
+		// 	result,
+		// )
 
 		if err := models.UpdateMarketDynamics(ctx, sqlite.Conn(), params.ReportID, result); err != nil {
 			slog.ErrorContext(ctx, "failed to update market dynamics", "error", err)
@@ -261,7 +261,7 @@ func run(ctx context.Context) error {
 
 		slog.InfoContext(
 			ctx,
-			"####################### result of competitive intelligence",
+			"####################### result of competitive intelligence ####################################",
 			"result",
 			result,
 		)
@@ -285,24 +285,24 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### starting company intelligence",
-			"report_id",
-			params.ReportID,
-		)
+		// slog.InfoContext(
+		// 	ctx,
+		// 	"####################### starting company intelligence",
+		// 	"report_id",
+		// 	params.ReportID,
+		// )
 		result, err := companyIntel.Research(ctx, params.CandidateName, params.CompanyURL)
 		if err != nil {
 			slog.ErrorContext(ctx, "research failed", "error", err)
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### result of company intelligence",
-			"result",
-			result,
-		)
+		// slog.InfoContext(
+		// 	ctx,
+		// 	"####################### result of company intelligence",
+		// 	"result",
+		// 	result,
+		// )
 
 		if err := models.UpdateCompanyIntelligence(ctx, sqlite.Conn(), params.ReportID, result); err != nil {
 			slog.ErrorContext(ctx, "failed to update company intelligence", "error", err)

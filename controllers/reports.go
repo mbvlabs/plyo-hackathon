@@ -210,15 +210,6 @@ func (r Reports) Show(c echo.Context) error {
 		}
 	}
 
-	slog.InfoContext(
-		c.Request().Context(),
-		"showing report chat",
-		"report_id", report.ID,
-		"company_name", report.CompanyName,
-		"status", report.Status,
-		"progress", report.ProgressPercentage,
-	)
-
 	return render(c, views.ReportChat(report))
 }
 
@@ -248,6 +239,10 @@ func (r Reports) TrackReportProgress(c echo.Context) error {
 		return c.String(404, "Report not found")
 	}
 
+	if allAgentsCompleted(report) && report.FinalReport != "" {
+		return sse.PatchElementTempl(views.ReportGenerationProgress(report))
+	}
+
 	if allAgentsCompleted(report) && report.FinalReport == "" {
 		company, err := models.FindCompanyCandidates(
 			c.Request().Context(),
@@ -272,12 +267,59 @@ func (r Reports) TrackReportProgress(c echo.Context) error {
 			log.Info("Error creating job", "error", err)
 		}
 
-		sse.PatchElements("<div id='reportProgressPuller'></div>")
+		return sse.PatchElementTempl(views.ReportGenerationProgress(report))
 	}
 
-	sse.PatchElementTempl(views.ReportProgress(report))
-	sse.PatchElementTempl(views.ReportUpdated(report.UpdatedAt))
+	if err := sse.PatchElementTempl(views.ReportProgress(report)); err != nil {
+		slog.Info(
+			"########################################## ERRORRRRR ###############################",
+			"e",
+			err,
+		)
+		return err
+	}
+	if err := sse.PatchElementTempl(views.ReportUpdated(report.UpdatedAt)); err != nil {
+		slog.Info(
+			"########################################## ERRORRRRR ###############################",
+			"e",
+			err,
+		)
+		return err
+	}
 	return sse.PatchElementTempl(views.ReportHeaderProgress(report))
+}
+
+func (r Reports) TrackReportGeneration(c echo.Context) error {
+	reportID := c.Param("id")
+
+	// Parse report ID
+	reportUUID, err := uuid.Parse(reportID)
+	if err != nil {
+		slog.ErrorContext(
+			c.Request().Context(),
+			"invalid report ID",
+			"error", err,
+			"report_id", reportID,
+		)
+		return c.String(400, "Invalid report ID")
+	}
+
+	sse := getSSE(c)
+
+	report, err := models.FindReport(
+		c.Request().Context(),
+		r.db.Conn(),
+		reportUUID,
+	)
+	if err != nil {
+		return c.String(404, "Report not found")
+	}
+
+	if report.Status == "completed" && report.FinalReport == "" {
+		return sse.PatchElementTempl(views.ReportProgress(report))
+	}
+
+	return sse.PatchElementTempl(views.ReportGenerationProgress(report))
 }
 
 func allAgentsCompleted(report models.Report) bool {
