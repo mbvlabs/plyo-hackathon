@@ -71,7 +71,7 @@ func setupControllers(sqlite database.SQLite) (controllers.Controllers, error) {
 		map[string]tools.Tooler{serper.GetName(): &serper},
 	)
 	ctrl, err := controllers.New(
-		*prelimAgent,
+		prelimAgent,
 		sqlite,
 	)
 	if err != nil {
