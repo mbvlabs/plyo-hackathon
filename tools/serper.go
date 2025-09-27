@@ -6,7 +6,11 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+
+	"github.com/openai/openai-go/v2"
 )
+
+const SerperToolName = "serper_search"
 
 type Serper struct {
 	apiKey string
@@ -20,6 +24,10 @@ type SerperRequest struct {
 	Query       string `json:"q"`
 	Autocorrect bool   `json:"autocorrect,omitempty"`
 	Tbs         string `json:"tbs,omitempty"`
+}
+
+func (s *Serper) GetName() string {
+	return SerperToolName
 }
 
 func (s *Serper) Query(query string) ([]byte, error) {
@@ -69,18 +77,29 @@ func (s *Serper) Query(query string) ([]byte, error) {
 	return body, nil
 }
 
-func (s *Serper) GetName() string {
-	return "serper"
-}
+func (s *Serper) GetFunctionStructure() openai.ChatCompletionToolUnionParam {
+	param := openai.ChatCompletionToolUnionParam{
+		OfFunction: &openai.ChatCompletionFunctionToolParam{
+			Function: openai.FunctionDefinitionParam{
+				Name: SerperToolName,
+				Description: openai.String(
+					"Search the web for current information, news, facts, and data. Use this when you need recent information, current events, or want to verify information from the web.",
+				),
+				Parameters: openai.FunctionParameters{
+					"type": "object",
+					"properties": map[string]any{
+						"query": map[string]string{
+							"type":        "string",
+							"description": "The search query to execute",
+						},
+					},
+					"required": []string{"query"},
+				},
+			},
+		},
+	}
 
-func (s *Serper) GetDescription() string {
-	return `Serper Search Tool - Use this tool to search the web for current information, news, facts, and data that may not be in your training data.
-
-Usage: Call with JSON input {"query": "your search term"}
-When to use: When you need recent information, current events, factual data, or want to verify information from the web.
-Returns: JSON response from Google search results including organic results, knowledge panels, and other search data.
-
-Example input: {"query": "latest AI developments 2024"}`
+	return param
 }
 
 func (s *Serper) Execute(input json.RawMessage) (string, error) {
