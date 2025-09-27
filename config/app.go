@@ -18,6 +18,9 @@ type app struct {
 	Domain      string `env:"APP_DOMAIN"`
 	ProjectName string `env:"PROJECT_NAME"`
 	Env         string `env:"ENVIRONMENT"`
+
+	OpenAPIKey   string `env:"OPENAI_API_KEY"`
+	SerperAPIkey string `env:"SERPER_API_KEY"`
 }
 
 func (a app) GetFullDomain() string {

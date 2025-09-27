@@ -10,10 +10,13 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/mbvlabs/plyo-hackathon/agents"
 	"github.com/mbvlabs/plyo-hackathon/config"
 	"github.com/mbvlabs/plyo-hackathon/controllers"
 	"github.com/mbvlabs/plyo-hackathon/database"
+	"github.com/mbvlabs/plyo-hackathon/providers"
 	"github.com/mbvlabs/plyo-hackathon/router"
+	"github.com/mbvlabs/plyo-hackathon/tools"
 
 	"github.com/labstack/echo/v4"
 	"golang.org/x/sync/errgroup"
@@ -57,8 +60,18 @@ func startServer(ctx context.Context, srv *http.Server, env string) error {
 
 	return srv.ListenAndServe()
 }
+
 func setupControllers(sqlite database.SQLite) (controllers.Controllers, error) {
+	serper := tools.NewSerper(config.App.SerperAPIkey)
+	openai := providers.NewClient(config.App.OpenAPIKey)
+
+	// Create prelim agent
+	prelimAgent := agents.NewPreliminaryResearch(
+		openai,
+		map[string]tools.Tooler{serper.GetName(): &serper},
+	)
 	ctrl, err := controllers.New(
+		*prelimAgent,
 		sqlite,
 	)
 	if err != nil {
@@ -103,8 +116,8 @@ func run(ctx context.Context) error {
 	srv := &http.Server{
 		Addr:         fmt.Sprintf("%v:%v", host, port),
 		Handler:      handler,
-		ReadTimeout:  1 * time.Second,
-		WriteTimeout: 5 * time.Second,
+		ReadTimeout:  5 * time.Minute,
+		WriteTimeout: 10 * time.Minute,
 		BaseContext:  func(_ net.Listener) context.Context { return ctx },
 	}
 
