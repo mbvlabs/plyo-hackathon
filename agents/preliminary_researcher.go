@@ -64,7 +64,8 @@ type CompanyCandidate struct {
 	Location    string `json:"location"    jsonschema:"required" jsonschema_description:"Headquarters or primary location"`
 }
 
-const preliminaryResearchSystemPrompt = `You are a research assistant tasked with gathering comprehensive information about companies.
+const preliminaryResearchSystemPrompt = `
+You are a research assistant tasked with gathering comprehensive information about companies.
 
 When given a company name or URL, FIRST verify you have the correct company by:
 - If given only a company name, search for and identify the official website URL
@@ -98,14 +99,14 @@ type PreliminaryResearch struct {
 func NewPreliminaryResearch(
 	client providers.Client,
 	tools map[string]tools.Tooler,
-) *PreliminaryResearch {
-	return &PreliminaryResearch{
+) PreliminaryResearch {
+	return PreliminaryResearch{
 		client: client,
 		tools:  tools,
 	}
 }
 
-func (r *PreliminaryResearch) Research(
+func (r PreliminaryResearch) Research(
 	ctx context.Context,
 	companyName string,
 ) (ResearchBrief, error) {
