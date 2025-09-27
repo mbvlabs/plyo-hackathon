@@ -40,24 +40,34 @@ func (r DataValidation) Research(
 	ctx context.Context,
 	companyName string,
 	companyURL string,
+	researchFindings string,
 ) (string, error) {
 	userPrompt := fmt.Sprintf(
 		`
-Validate and cross-reference research findings for %s (%s). Tasks include:
+Validate and cross-reference the following research findings for %s (%s):
 
-- Cross-check information across multiple sources including their official website
-- Identify and flag conflicting data points
-- Assess source credibility and information freshness
-- Standardize data formats and resolve inconsistencies
-- Calculate confidence scores for key findings
-- Highlight information gaps and data quality issues
-- Verify key metrics and claims against official company sources
-- Flag any suspicious or unverified information
+RESEARCH FINDINGS TO VALIDATE:
+%s
 
-Use %s as the primary source for validation and provide data quality assessment with recommendations for additional verification.
+Your validation tasks:
+- Cross-check each claim against the official website %s and other reliable sources
+- Identify any conflicting information or inconsistencies
+- Assess the credibility and freshness of the claims made
+- Flag any unverified or suspicious information
+- Provide confidence scores (1-10) for key findings
+- Highlight information gaps where additional verification is needed
+- Suggest corrections for any inaccuracies found
+
+Format your response with:
+1. VALIDATED CLAIMS (with confidence scores)
+2. FLAGGED ISSUES (inconsistencies, unverified claims)
+3. CORRECTED INFORMATION (provide accurate data where errors were found)
+4. RECOMMENDATIONS (additional verification needed)
+5. OVERALL CONFIDENCE ASSESSMENT
 		`,
 		companyName,
 		companyURL,
+		researchFindings,
 		companyURL,
 	)
 

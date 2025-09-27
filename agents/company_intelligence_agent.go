@@ -27,6 +27,8 @@ You are a Company Intelligence Agent specialized in gathering comprehensive comp
 - Flag any compliance issues, controversies, or risk factors
 - Output structured company profiles with confidence scores for each data point
 
+You have access to tools that directly scrape the company website provided.
+
 Always verify information from multiple sources and note data freshness. Focus on factual, business-relevant intelligence.
 	`
 
@@ -81,23 +83,20 @@ func (r CompanyIntelligence) Research(
 	if err != nil {
 		return "", fmt.Errorf("failed to generate research summary: %w", err)
 	}
-
-	// finalResponse, err := r.client.Prompt(
-	// 	ctx,
-	// 	providers.GPT41Mini,
-	// 	"Your job is to make sure that the final response adheres to the specific schema. You will receive a string as the user prompt, as well as a schema, return the user prompt in the specified user format.",
-	// 	response,
-	// 	r.tools,
-	// 	&researchBriefSchema,
-	// )
-	// if err != nil {
-	// 	return ResearchBrief{}, fmt.Errorf("failed to generate research summary: %w", err)
-	// }
-	//
-	// var brief ResearchBrief
-	// if err := json.Unmarshal([]byte(finalResponse), &brief); err != nil {
-	// 	return ResearchBrief{}, fmt.Errorf("failed to unmarshal research brief: %w", err)
-	// }
+	if response == "" {
+		responseTwo, err := r.client.Prompt(
+			ctx,
+			providers.GPT41Mini,
+			companyIntelligenceSystemPrompt,
+			userPrompt,
+			r.tools,
+			nil,
+		)
+		if err != nil {
+			return "", fmt.Errorf("failed to generate research summary: %w", err)
+		}
+		return responseTwo, nil
+	}
 
 	return response, nil
 }

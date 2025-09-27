@@ -114,14 +114,22 @@ func run(ctx context.Context) error {
 	})
 
 	serper := tools.NewSerper(config.App.SerperAPIkey)
+	serperScrape := tools.NewSerperScrape(config.App.SerperAPIkey)
 	openai := providers.NewClient(config.App.OpenAPIKey)
-	toolsMap := map[string]tools.Tooler{serper.GetName(): &serper}
+	scrapingBee := tools.NewScrapingBee(config.App.ScrapingBeeAPIKey)
+
+	toolsMap := map[string]tools.Tooler{
+		serper.GetName():       &serper,
+		serperScrape.GetName(): &serperScrape,
+		scrapingBee.GetName():  &scrapingBee,
+	}
 
 	// Create agents
 	companyIntel := agents.NewCompanyIntelligence(openai, toolsMap)
 	competitiveIntel := agents.NewCompetitiveIntelligence(openai, toolsMap)
 	marketDynamics := agents.NewMarketDynamics(openai, toolsMap)
 	trendAnalysis := agents.NewTrendAnalysis(openai, toolsMap)
+	dataValidator := agents.NewDataValidation(openai, toolsMap)
 	reportGenerator := agents.NewReportGenerator(openai, nil)
 
 	r.Register(agents.ReportGeneratorJobName, func(ctx context.Context, m []byte) error {
@@ -136,12 +144,6 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		// slog.InfoContext(
-		// 	ctx,
-		// 	"####################### starting report generation",
-		// 	"report_id",
-		// 	params.ReportID,
-		// )
 		result, err := reportGenerator.Generate(
 			ctx,
 			params.CandidateName,
@@ -161,7 +163,6 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		slog.InfoContext(ctx, "completed report", "report_id", params.ReportID)
 		return nil
 	})
 	r.Register(agents.TrendAnalysisJobName, func(ctx context.Context, m []byte) error {
@@ -171,26 +172,23 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		// slog.InfoContext(
-		// 	ctx,
-		// 	"####################### starting trend analysis",
-		// 	"report_id",
-		// 	params.ReportID,
-		// )
 		result, err := trendAnalysis.Research(ctx, params.CandidateName, params.CompanyURL)
 		if err != nil {
 			slog.ErrorContext(ctx, "research failed", "error", err)
 			return err
 		}
 
-		// slog.InfoContext(
-		// 	ctx,
-		// 	"####################### result of trend analysis",
-		// 	"result",
-		// 	result,
-		// )
-
-		if err := models.UpdateTrendAnalysis(ctx, sqlite.Conn(), params.ReportID, result); err != nil {
+		validatedResult, err := dataValidator.Research(
+			ctx,
+			params.CandidateName,
+			params.CompanyURL,
+			result,
+		)
+		if err != nil {
+			slog.ErrorContext(ctx, "research failed", "error", err)
+			return err
+		}
+		if err := models.UpdateTrendAnalysis(ctx, sqlite.Conn(), params.ReportID, validatedResult); err != nil {
 			slog.ErrorContext(ctx, "failed to update trend analysis", "error", err)
 			return err
 		}
@@ -209,26 +207,24 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		// slog.InfoContext(
-		// 	ctx,
-		// 	"####################### starting market dynamics",
-		// 	"report_id",
-		// 	params.ReportID,
-		// )
 		result, err := marketDynamics.Research(ctx, params.CandidateName, params.CompanyURL)
 		if err != nil {
 			slog.ErrorContext(ctx, "research failed", "error", err)
 			return err
 		}
 
-		// slog.InfoContext(
-		// 	ctx,
-		// 	"####################### result of market dynamics",
-		// 	"result",
-		// 	result,
-		// )
+		validatedResult, err := dataValidator.Research(
+			ctx,
+			params.CandidateName,
+			params.CompanyURL,
+			result,
+		)
+		if err != nil {
+			slog.ErrorContext(ctx, "research failed", "error", err)
+			return err
+		}
 
-		if err := models.UpdateMarketDynamics(ctx, sqlite.Conn(), params.ReportID, result); err != nil {
+		if err := models.UpdateMarketDynamics(ctx, sqlite.Conn(), params.ReportID, validatedResult); err != nil {
 			slog.ErrorContext(ctx, "failed to update market dynamics", "error", err)
 			return err
 		}
@@ -247,26 +243,24 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		slog.InfoContext(
-			ctx,
-			"####################### starting competitive intelligence",
-			"report_id",
-			params.ReportID,
-		)
 		result, err := competitiveIntel.Research(ctx, params.CandidateName, params.CompanyURL)
 		if err != nil {
 			slog.ErrorContext(ctx, "research failed", "error", err)
 			return err
 		}
 
-		slog.InfoContext(
+		validatedResult, err := dataValidator.Research(
 			ctx,
-			"####################### result of competitive intelligence ####################################",
-			"result",
+			params.CandidateName,
+			params.CompanyURL,
 			result,
 		)
+		if err != nil {
+			slog.ErrorContext(ctx, "research failed", "error", err)
+			return err
+		}
 
-		if err := models.UpdateCompetitiveIntelligence(ctx, sqlite.Conn(), params.ReportID, result); err != nil {
+		if err := models.UpdateCompetitiveIntelligence(ctx, sqlite.Conn(), params.ReportID, validatedResult); err != nil {
 			slog.ErrorContext(ctx, "failed to update competitive intelligence", "error", err)
 			return err
 		}
@@ -275,7 +269,6 @@ func run(ctx context.Context) error {
 			slog.ErrorContext(ctx, "failed to update report progress", "error", err)
 			return err
 		}
-		slog.InfoContext(ctx, "completed competitive intelligence", "report_id", params.ReportID)
 		return nil
 	})
 	r.Register(agents.CompanyIntelligenceJobName, func(ctx context.Context, m []byte) error {
@@ -285,26 +278,24 @@ func run(ctx context.Context) error {
 			return err
 		}
 
-		// slog.InfoContext(
-		// 	ctx,
-		// 	"####################### starting company intelligence",
-		// 	"report_id",
-		// 	params.ReportID,
-		// )
 		result, err := companyIntel.Research(ctx, params.CandidateName, params.CompanyURL)
 		if err != nil {
 			slog.ErrorContext(ctx, "research failed", "error", err)
 			return err
 		}
 
-		// slog.InfoContext(
-		// 	ctx,
-		// 	"####################### result of company intelligence",
-		// 	"result",
-		// 	result,
-		// )
+		validatedResult, err := dataValidator.Research(
+			ctx,
+			params.CandidateName,
+			params.CompanyURL,
+			result,
+		)
+		if err != nil {
+			slog.ErrorContext(ctx, "research failed", "error", err)
+			return err
+		}
 
-		if err := models.UpdateCompanyIntelligence(ctx, sqlite.Conn(), params.ReportID, result); err != nil {
+		if err := models.UpdateCompanyIntelligence(ctx, sqlite.Conn(), params.ReportID, validatedResult); err != nil {
 			slog.ErrorContext(ctx, "failed to update company intelligence", "error", err)
 			return err
 		}
@@ -317,22 +308,6 @@ func run(ctx context.Context) error {
 		return nil
 	})
 
-	// r.Register("CompanyIntelligenceJobName", func(ctx context.Context, m []byte) error {
-	// 	slog.InfoContext(ctx, "starting company intelligence", "report_id", report.ID)
-	//
-	// 	result, err := companyIntel.Research(ctx, candidate.Name, companyURL)
-	//
-	// 	if err := models.UpdateCompanyIntelligence(ctx, r.db.Conn(), report.ID, result); err != nil {
-	// 		slog.ErrorContext(ctx, "failed to update company intelligence", "error", err)
-	// 		companyDone <- err
-	// 		return
-	// 	}
-	// 	models.UpdateReportProgress(ctx, r.db.Conn(), report.ID)
-	// 	slog.InfoContext(ctx, "completed company intelligence", "report_id", report.ID)
-	// 	return nil
-	// })
-
-	// Start the job runner and see the job run.
 	go func() {
 		r.Start(ctx)
 	}()
@@ -340,7 +315,10 @@ func run(ctx context.Context) error {
 	// Create prelim agent
 	prelimAgent := agents.NewPreliminaryResearch(
 		openai,
-		map[string]tools.Tooler{serper.GetName(): &serper},
+		map[string]tools.Tooler{
+			serper.GetName():       &serper,
+			serperScrape.GetName(): &serperScrape,
+		},
 	)
 	controllers, err := setupControllers(sqlite, q, prelimAgent)
 	if err != nil {

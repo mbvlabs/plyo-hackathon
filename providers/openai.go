@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"time"
 
 	"github.com/mbvlabs/plyo-hackathon/tools"
 	"github.com/openai/openai-go/v2"
@@ -30,6 +31,27 @@ const (
 
 func NewClient(apiKey string) Client {
 	return Client{openai.NewClient(option.WithAPIKey(apiKey))}
+}
+
+func (c *Client) retryWithBackoff(ctx context.Context, fn func() error, maxRetries int) error {
+	for attempt := 0; attempt <= maxRetries; attempt++ {
+		err := fn()
+		if err == nil {
+			return nil
+		}
+
+		if attempt == maxRetries {
+			return err
+		}
+
+		backoffDuration := time.Duration(1<<attempt) * time.Second
+		select {
+		case <-ctx.Done():
+			return ctx.Err()
+		case <-time.After(backoffDuration):
+		}
+	}
+	return nil
 }
 
 func (c *Client) Prompt(
@@ -66,9 +88,14 @@ func (c *Client) Prompt(
 		}
 	}
 
-	resp, err := c.client.Chat.Completions.New(ctx, params)
+	var resp *openai.ChatCompletion
+	err := c.retryWithBackoff(ctx, func() error {
+		var apiErr error
+		resp, apiErr = c.client.Chat.Completions.New(ctx, params)
+		return apiErr
+	}, 3)
 	if err != nil {
-		return "", fmt.Errorf("failed to create completion: %w", err)
+		return "", fmt.Errorf("failed to create completion after retries: %w", err)
 	}
 
 	if len(resp.Choices) == 0 {
@@ -87,7 +114,7 @@ func (c *Client) Prompt(
 			var args map[string]any
 			err := json.Unmarshal([]byte(toolCall.Function.Arguments), &args)
 			if err != nil {
-				panic(err)
+				return "", fmt.Errorf("failed to unmarshal tool arguments: %w", err)
 			}
 
 			result, err := tools[toolCall.Function.Name].Execute(
@@ -101,9 +128,13 @@ func (c *Client) Prompt(
 		}
 	}
 
-	resp, err = c.client.Chat.Completions.New(ctx, params)
+	err = c.retryWithBackoff(ctx, func() error {
+		var apiErr error
+		resp, apiErr = c.client.Chat.Completions.New(ctx, params)
+		return apiErr
+	}, 3)
 	if err != nil {
-		return "", fmt.Errorf("failed to create completion: %w", err)
+		return "", fmt.Errorf("failed to create completion after retries: %w", err)
 	}
 
 	return resp.Choices[0].Message.Content, nil

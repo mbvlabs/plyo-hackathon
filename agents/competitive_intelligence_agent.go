@@ -27,7 +27,7 @@ You are a Competitive Intelligence Agent focused on mapping competitive landscap
 - Create competitor matrices and positioning maps
 - Monitor competitor marketing strategies and messaging
 
-Use the tools available to your disposal to gather competitive intelligence. For each analysis:
+Use the tools available to your disposal to search and gather competitive intelligence. For each analysis:
 1. First search for "[company name] competitors"
 2. Search for "[company name] vs [competitor]" comparisons
 3. Search for "[industry] market landscape [current year]"
@@ -78,7 +78,7 @@ Use %s as your starting point to understand their positioning, then create compe
 
 	response, err := r.client.Prompt(
 		ctx,
-		providers.GPT41Mini,
+		providers.GPT41,
 		competitiveIntelligenceSystemPrompt,
 		userPrompt,
 		r.tools,
@@ -86,6 +86,22 @@ Use %s as your starting point to understand their positioning, then create compe
 	)
 	if err != nil {
 		return "", fmt.Errorf("failed to generate research summary: %w", err)
+	}
+
+	if response == "" {
+		responseTwo, err := r.client.Prompt(
+			ctx,
+			providers.GPT41,
+			competitiveIntelligenceSystemPrompt,
+			userPrompt,
+			r.tools,
+			nil,
+		)
+		if err != nil {
+			return "", fmt.Errorf("failed to generate research summary: %w", err)
+		}
+
+		return responseTwo, nil
 	}
 
 	return response, nil
