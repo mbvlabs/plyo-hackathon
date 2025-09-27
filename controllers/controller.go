@@ -3,8 +3,11 @@ package controllers
 import (
 	"context"
 	"net/http"
+
+	"github.com/mbvlabs/plyo-hackathon/agents"
 	"github.com/mbvlabs/plyo-hackathon/database"
 	"github.com/mbvlabs/plyo-hackathon/router/cookies"
+	"github.com/starfederation/datastar-go/datastar"
 
 	"github.com/a-h/templ"
 	"github.com/labstack/echo/v4"
@@ -12,11 +15,14 @@ import (
 )
 
 type Controllers struct {
-	Assets Assets
-	API    API
-	Pages  Pages
+	Assets         Assets
+	API            API
+	Pages          Pages
+	ResearchBriefs ResearchBriefs
 }
+
 func New(
+	prelimAgent agents.PreliminaryResearch,
 	db database.SQLite,
 ) (Controllers, error) {
 	cacheBuilder, err := otter.NewBuilder[string, templ.Component](20)
@@ -32,11 +38,13 @@ func New(
 	assets := newAssets()
 	pages := newPages(db, pageCacher)
 	api := newAPI(db)
+	researchbriefs := newResearchBriefs(prelimAgent, db)
 
 	return Controllers{
 		assets,
 		api,
 		pages,
+		researchbriefs,
 	}, nil
 }
 
@@ -63,4 +71,8 @@ func render(ctx echo.Context, t templ.Component) error {
 	}
 
 	return ctx.HTML(http.StatusOK, buf.String())
+}
+
+func getSSE(c echo.Context) *datastar.ServerSentEventGenerator {
+	return datastar.NewSSE(c.Response(), c.Request())
 }

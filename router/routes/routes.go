@@ -29,5 +29,10 @@ var BuildRoutes = func() []Route {
 		apiRoutes...,
 	)
 
+	r = append(
+		r,
+		ResearchBriefRoutes...,
+	)
+
 	return r
 }()
