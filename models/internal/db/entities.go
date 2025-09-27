@@ -5,6 +5,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 )
 
@@ -23,6 +24,27 @@ type Companycandidate struct {
 	Description     string
 	Industry        string
 	Location        string
+}
+
+type Report struct {
+	ID                               string
+	CreatedAt                        time.Time
+	UpdatedAt                        time.Time
+	CompayCandidateID                string
+	CompanyName                      string
+	Status                           string
+	ProgressPercentage               sql.NullInt64
+	PreliminaryResearchCompleted     sql.NullBool
+	CompanyIntelligenceCompleted     sql.NullBool
+	CompetitiveIntelligenceCompleted sql.NullBool
+	MarketDynamicsCompleted          sql.NullBool
+	TrendAnalysisCompleted           sql.NullBool
+	CompanyIntelligenceData          sql.NullString
+	CompetitiveIntelligenceData      sql.NullString
+	MarketDynamicsData               sql.NullString
+	TrendAnalysisData                sql.NullString
+	FinalReport                      sql.NullString
+	CompletedAt                      sql.NullTime
 }
 
 type Researchbrief struct {

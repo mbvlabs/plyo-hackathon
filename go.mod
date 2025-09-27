@@ -11,6 +11,7 @@ tool (
 
 require (
 	github.com/a-h/templ v0.3.943
+	github.com/alecthomas/chroma/v2 v2.20.0
 	github.com/caarlos0/env/v10 v10.0.0
 	github.com/dromara/carbon/v2 v2.6.12
 	github.com/go-playground/validator/v10 v10.27.0
@@ -20,7 +21,8 @@ require (
 	github.com/labstack/echo/v4 v4.13.4
 	github.com/mattn/go-sqlite3 v1.14.32
 	github.com/maypok86/otter v1.2.4
-	github.com/openai/openai-go v1.12.0
+	github.com/yuin/goldmark v1.7.13
+	github.com/yuin/goldmark-highlighting/v2 v2.0.0-20230729083705-37449abec8cc
 	go.opentelemetry.io/contrib/instrumentation/github.com/labstack/echo/otelecho v0.63.0
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/metric v1.38.0
@@ -33,6 +35,7 @@ require (
 	github.com/CAFxX/httpcompression v0.0.9 // indirect
 	github.com/bahlo/generic-list-go v0.2.0 // indirect
 	github.com/buger/jsonparser v1.1.1 // indirect
+	github.com/dlclark/regexp2 v1.11.5 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/wk8/go-ordered-map/v2 v2.1.8 // indirect
 )
@@ -98,7 +101,7 @@ require (
 	github.com/microsoft/go-mssqldb v1.9.2 // indirect
 	github.com/natefinch/atomic v1.0.1 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
-	github.com/openai/openai-go/v2 v2.7.0 // indirect
+	github.com/openai/openai-go/v2 v2.7.0
 	github.com/paulmach/orb v0.11.1 // indirect
 	github.com/pelletier/go-toml v1.9.5 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.4 // indirect

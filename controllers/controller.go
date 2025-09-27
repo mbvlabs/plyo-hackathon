@@ -19,6 +19,7 @@ type Controllers struct {
 	API            API
 	Pages          Pages
 	ResearchBriefs ResearchBriefs
+	Reports        Reports
 }
 
 func New(
@@ -39,12 +40,14 @@ func New(
 	pages := newPages(db, pageCacher)
 	api := newAPI(db)
 	researchbriefs := newResearchBriefs(prelimAgent, db)
+	reports := newReports(db)
 
 	return Controllers{
 		assets,
 		api,
 		pages,
 		researchbriefs,
+		reports,
 	}, nil
 }
 

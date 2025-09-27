@@ -123,8 +123,11 @@ templ PreliminaryResearchResults(researchBrief models.ResearchBrief, companyCand
 										<span>Location: <span class="font-medium">{ candidate.Location }</span></span>
 									</div>
 								</div>
-								<button class="ml-4 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors">
-									Select
+								<button
+									data-on-click={ fmt.Sprintf("@post('%s?id=%s')", routes.ReportCreate.Path, candidate.ID.String()) }
+									class="ml-4 px-3 py-1 text-sm bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+								>
+									Start Research
 								</button>
 							</div>
 						</div>
@@ -231,14 +234,13 @@ templ Home() {
 							class="relative"
 							data-indicator-fetching
 						>
-							<textarea
+							<input
 								data-bind="query"
 								class="text-black w-full p-4 pr-12 border border-gray-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent shadow-sm disabled:bg-gray-100 disabled:text-gray-500 disabled:border-gray-200 disabled:cursor-not-allowed"
 								placeholder="Research Company e.g. plyolab, kfund, latitude"
-								rows="1"
 								style="min-height: 56px;"
 								data-attr-disabled="$fetching"
-							></textarea>
+							/>
 							<button
 								data-attr-disabled="$fetching"
 								type="submit"

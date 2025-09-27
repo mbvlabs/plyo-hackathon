@@ -70,6 +70,7 @@ func setupControllers(sqlite database.SQLite) (controllers.Controllers, error) {
 		openai,
 		map[string]tools.Tooler{serper.GetName(): &serper},
 	)
+
 	ctrl, err := controllers.New(
 		prelimAgent,
 		sqlite,

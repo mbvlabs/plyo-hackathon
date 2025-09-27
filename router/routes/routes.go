@@ -34,5 +34,10 @@ var BuildRoutes = func() []Route {
 		ResearchBriefRoutes...,
 	)
 
+	r = append(
+		r,
+		ReportRoutes...,
+	)
+
 	return r
 }()
