@@ -121,14 +121,10 @@ The platform provides real-time progress tracking and generates professional rep
 
 ## Team Details
 
-**Team Name**: MBV Labs
+**Team Name**: mbvlabs
 
 **Team Members**:
-- [Member Name] - [LinkedIn URL]
-- [Member Name] - [LinkedIn URL]
-- [Member Name] - [LinkedIn URL]
-
-*Note: Please update the team member details above with actual names and LinkedIn URLs*
+- Morten Bisgaard Vistisen - [LinkedIn](https://linkedin.com/in/mortenvistisen)
 
 ## Tech Stack
 
