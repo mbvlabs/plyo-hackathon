@@ -7,6 +7,8 @@ Check the live app [here](https://plyo-hackathon.fly.dev/) - assuming the tokens
 **Demo**:
 https://www.youtube.com/watch?v=kNwaucU1s7c
 
+[![IMAGE ALT TEXT HERE](https://img.youtube.com/vi/YOUTUBE_VIDEO_ID_HERE/0.jpg)](https://www.youtube.com/watch?v=kNwaucU1s7c)
+
 ## Project Write-Up
 
 ### The Problem I Tackled
