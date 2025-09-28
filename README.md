@@ -2,6 +2,8 @@
 
 A comprehensive research intelligence platform that leverages AI agents to generate detailed company analysis reports. The platform automatically researches companies across multiple dimensions including company intelligence, competitive analysis, market dynamics, and trend analysis.
 
+Check the live app [here](https://plyo-hackathon.fly.dev/) - assuming the tokens are still valid and have credits!
+
 ## Project Write-Up
 
 ### The Problem I Tackled

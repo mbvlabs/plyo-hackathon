@@ -2,8 +2,10 @@ package main
 
 import (
 	"context"
+	"database/sql"
 	"encoding/json"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"net"
 	"net/http"
@@ -21,6 +23,8 @@ import (
 	"github.com/mbvlabs/plyo-hackathon/tools"
 
 	"github.com/labstack/echo/v4"
+	_ "github.com/mattn/go-sqlite3"
+	"github.com/pressly/goose/v3"
 	"golang.org/x/sync/errgroup"
 	"maragu.dev/goqite"
 	"maragu.dev/goqite/jobs"
@@ -93,11 +97,50 @@ func setupRouter(ctrl controllers.Controllers) (*echo.Echo, error) {
 	return router.SetupRoutes(), nil
 }
 
+func runMigrations(ctx context.Context, db *sql.DB) error {
+	slog.Info("RUUUUNNING MIGRATIONS")
+	fsys, err := fs.Sub(database.Migrations, "migrations")
+	if err != nil {
+		panic(err)
+	}
+
+	gooseProvider, err := goose.NewProvider(
+		goose.DialectSQLite3,
+		db,
+		fsys,
+		goose.WithVerbose(true),
+	)
+	if err != nil {
+		panic(err)
+	}
+
+	pending, err := gooseProvider.HasPending(ctx)
+	if err != nil {
+		return err
+	}
+
+	slog.Info("DATABASE HAS PENDING MIGRATIONS", "has_pending", pending)
+
+	if _, err := gooseProvider.Up(ctx); err != nil {
+		slog.ErrorContext(ctx, "failed to run migrations", "error", err)
+		return err
+	}
+
+	slog.InfoContext(ctx, "successfully ran migrations")
+	return nil
+}
+
 func run(ctx context.Context) error {
 	ctx, cancel := signal.NotifyContext(ctx, os.Interrupt)
 	defer cancel()
+
 	sqlite, err := database.NewSQLite(ctx)
 	if err != nil {
+		return err
+	}
+
+	// Run migrations on startup
+	if err := runMigrations(ctx, sqlite.Conn()); err != nil {
 		return err
 	}
 
