@@ -5,8 +5,6 @@ A comprehensive research intelligence platform that leverages AI agents to gener
 Check the live app [here](https://plyo-hackathon.fly.dev/) - assuming the tokens are still valid and have credits!
 
 **Demo**:
-https://customer-bwpd441w4sfrplmi.cloudflarestream.com/3eb0b37e619093e2e0dbe07e0db014c5/watch
-
 https://www.youtube.com/watch?v=kNwaucU1s7c
 
 ## Project Write-Up
