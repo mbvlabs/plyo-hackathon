@@ -31,7 +31,7 @@ func (s *ScrapingBee) GetName() string {
 }
 
 func (s *ScrapingBee) Scrape(targetURL string) ([]byte, error) {
-	slog.Info("SCRAAAAAAAAAAAAAAAAAAAAAAPING BEEEEEEEEEEE")
+	slog.Info("#################### SCRAPING BEE ####################")
 	baseURL := "https://app.scrapingbee.com/api/v1"
 
 	params := url.Values{}

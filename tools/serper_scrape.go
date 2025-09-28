@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/openai/openai-go/v2"
@@ -29,6 +30,7 @@ func (s *SerperScrape) GetName() string {
 }
 
 func (s *SerperScrape) Scrape(url string) ([]byte, error) {
+	slog.Info("#################### SERPER SCRAPE ####################")
 	req := SerperScrapeRequest{
 		URL: url,
 	}

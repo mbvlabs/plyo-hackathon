@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log/slog"
 	"net/http"
 
 	"github.com/openai/openai-go/v2"
@@ -31,6 +32,7 @@ func (s *Serper) GetName() string {
 }
 
 func (s *Serper) Query(query string) ([]byte, error) {
+	slog.Info("#################### SERPER CALLED ####################")
 	req := SerperRequest{
 		Query:       query,
 		Autocorrect: false,
